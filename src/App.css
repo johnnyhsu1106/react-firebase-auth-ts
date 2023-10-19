@@ -1,0 +1,7 @@
+.container {
+  min-height: 100vh;
+}
+
+.form-wrapper {
+  max-width: 500px;
+}
