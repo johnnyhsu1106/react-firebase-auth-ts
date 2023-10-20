@@ -1,8 +1,7 @@
 # Getting Started
-This is a Authentication built based on React in TypeScrit and Firebase Authentication.
+This is a Authentication built based on React in TypeScript and Firebase Authentication.
 
-App: https://react-firebase-auth-by-yh.web.app/login
-
+App: https://react-firebase-auth-by-jh.web.app
 
 Checkout this repo, install dependencies, then start the gulp process with the following:
 ```
