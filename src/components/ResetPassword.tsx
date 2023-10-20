@@ -9,30 +9,33 @@ import { useAuthContext } from '../context/AuthContext'
 const ResetPassword = () => {
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [successMsg, setSuccessMsg] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSucceed, setIsSucceed] = useState<boolean>(false);
   const { resetPassword } = useAuthContext();
   const emailRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
 
-  async function handleFormSubmit(e: FormEvent) {
+  async function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    
+    setIsLoading(true)
+    setErrorMsg('')
 
-    try {
-      setSuccessMsg('')
-      setErrorMsg('')
-      setIsLoading(true)
-
+    try {  
       await resetPassword(emailRef.current?.value || '');
-      setSuccessMsg('Check your inbox for reset your password. Page will be redirected now');
+      setSuccessMsg('Check your inbox for reset your password.');
+      setIsSucceed(true);
+
       setTimeout(() => {
         navigate('/login');
-        
-      }, 1500)
+      }, 3000)
       
     } catch (err) {
       setErrorMsg('Failed to reset password');
+      setIsSucceed(false);
+
+    } finally {
       setIsLoading(false);
     }
   }
@@ -56,7 +59,7 @@ const ResetPassword = () => {
 
             <Button 
               variant='primary'
-              disabled={isLoading} 
+              disabled={isLoading || isSucceed} 
               className='w-100 mt-4' 
               type='submit'
             >

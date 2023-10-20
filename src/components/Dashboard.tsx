@@ -7,11 +7,11 @@ import { useAuthContext } from '../context/AuthContext';
 
 
 const Dashboard = () => {
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const { logout, user } = useAuthContext();
   const navigate = useNavigate();
   
-  const handleUserLogout = async () => {
+  const handleUserLogout = async (): Promise<void> => {
     setErrorMsg('')
 
     try {

@@ -7,30 +7,34 @@ import { useAuthContext } from '../context/AuthContext';
 
 
 const Login = () => {
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSucceed, setIsSucceed] = useState<boolean>(false);
   const { login } = useAuthContext();
   const navigation = useNavigate();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   
-  const handLoginleSubmit = async (e: FormEvent) => {
+  const handLoginleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setMessage('')
+    setIsLoading(true)
+    
     try { 
-      setMessage('')
-      setIsLoading(true)
       await login(emailRef.current?.value || '', passwordRef.current?.value || '');
+      setIsSucceed(true);
       navigation('/');
 
     } catch (err) {
-
       setMessage('Failed to log in');
+      setIsSucceed(false);
 
+    } finally {
+      setIsLoading(false);
     }
 
-    setIsLoading(false);
   };
 
   return (
@@ -61,7 +65,7 @@ const Login = () => {
             
             <Button 
               variant='primary'
-              disabled={isLoading} 
+              disabled={isLoading || isSucceed} 
               className='w-100 mt-4' 
               type='submit'>
               Login

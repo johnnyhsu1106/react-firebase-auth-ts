@@ -8,15 +8,19 @@ import { useNavigate } from 'react-router-dom';
 const ChangePassword = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSucceed, setIsSucceed] = useState<boolean>(false);
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordConfirmRef = useRef<HTMLInputElement>(null);
-
   const { changePassword } = useAuthContext();
-  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
 
-  const handleFormSubmit = async (e: FormEvent) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!passwordRef.current?.value || !passwordConfirmRef.current?.value) {
+      console.error('Password Ref is null');
+    }
 
     if (passwordRef.current?.value.trim() === '' || passwordConfirmRef.current?.value.trim() === '') {
       setErrorMsg('Please enter password');
@@ -30,17 +34,21 @@ const ChangePassword = () => {
 
     setIsLoading(true);
     setErrorMsg('');
-    setSuccessMsg('');
 
     try {
       await changePassword(passwordRef.current?.value || '');
-      setSuccessMsg(`Password has been updated. Page will be redirected`);
+      setSuccessMsg(`Password has been updated.`);
+      setIsSucceed(true);
       setTimeout(() => {
         navigate('/login');    
       }, 1500)
       
     } catch (err) {
+      console.error(err);
       setErrorMsg('Failed to change password.');
+      setIsSucceed(false);
+
+    } finally {
       setIsLoading(false);
     }
   };
@@ -73,7 +81,7 @@ const ChangePassword = () => {
             
             <Button 
               variant='primary'
-              disabled={isLoading} 
+              disabled={isLoading || isSucceed} 
               className='w-100 mt-4' 
               type='submit'>
               Update

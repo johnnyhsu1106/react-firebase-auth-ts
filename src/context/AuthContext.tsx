@@ -27,11 +27,11 @@ interface AuthProviderProps {
 };
 
 const auth = getAuth(app);
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+const AuthContext = createContext<IAuthContext | null>(null);
 
 const useAuthContext = () => {
   const auth = useContext(AuthContext);
-  if (auth === undefined) {
+  if (!auth) {
     throw new Error('useAuthContext must be used within AuthProvider');
   }
   return auth;
@@ -57,18 +57,13 @@ const AuthProvider = ({ children } : AuthProviderProps) => {
     return sendPasswordResetEmail(auth, email)
   };
 
-  const changePassword = (password: string): Promise<void> => {
-    if (user === null) {
+  const changePassword = (password: string): Promise<void> => {    
+    if (!user) {
       return new Promise((_, reject) => {
-        reject('User is not defined');
-      })
-    };
-    
-    if (password === '') {
-      return new Promise((_, reject) => {
-        reject('Please enter password');
+        reject('User is null');
       })
     }
+
     return updatePassword(user, password);
   };
 

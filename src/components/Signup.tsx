@@ -1,40 +1,57 @@
-import { useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Message from './Message';
 import { useAuthContext } from '../context/AuthContext';
-
+import { FirebaseError } from 'firebase/app';
+ 
+export interface AuthError extends FirebaseError {
+  message: string;
+}
 
 const Signup = () => {
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string>('')
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSucceed, setIsSucceed] = useState<boolean>(false);
   const { signup } = useAuthContext();
   const navigate = useNavigate();
 
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const passwordConfirmRef = useRef();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordConfirmRef = useRef<HTMLInputElement>(null);
 
-  const handSignupleSubmit = async (e) => {
+  const handSignupleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      setMessage("Passwords do not match");
+ 
+    if (passwordRef.current?.value.trim() === '' || passwordConfirmRef.current?.value.trim() === '') {
+      setErrorMsg('Please enter password');
       return;
-    }    
+    }   
 
-    try { 
-      setMessage('');
-      setIsLoading(true)
-      await signup(emailRef.current.value, passwordRef.current.value);
-      navigate('/')
-            
-    } catch (err) {
-      setMessage('Failed to create an account');
+    if (passwordRef.current?.value !== passwordConfirmRef.current?.value) {
+      setErrorMsg("Passwords do not match");
+      return;
     }
 
-    setIsLoading(false);
+    setIsLoading(true)
+    setErrorMsg('');
+
+    try { 
+      await signup(emailRef.current?.value || '',  passwordRef.current?.value || '');
+      setSuccessMsg('New Account is created.');
+      setIsSucceed(true);
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    
+    } catch (err) {
+      setErrorMsg('Failed to create an account');
+
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,45 +59,44 @@ const Signup = () => {
       <Card>
         <Card.Body>
           <h2 className='text-center mb-4'>Sign Up</h2>
-          { message && <Message type='danger' message={message} /> }
+            {errorMsg && <Message type='danger' message={errorMsg}/>}
+            {successMsg && <Message type='success' message={successMsg} />}
+            <Form onSubmit={handSignupleSubmit}>
+              <Form.Group id='email' className='mb-3'>
+                <Form.Control 
+                  type='email' 
+                  ref={emailRef} 
+                  required
+                  placeholder='example@gmail.com'
+                />
+              </Form.Group>
 
-          <Form onSubmit={handSignupleSubmit}>
-            <Form.Group id='email' className='mb-3'>
-              <Form.Control 
-                type='email' 
-                ref={emailRef} 
-                required
-                placeholder='example@gmail.com'
-              />
-            </Form.Group>
+              <Form.Group id='password' className='mb-3'>
+                <Form.Control 
+                  type='password' 
+                  ref={passwordRef} 
+                  required 
+                  placeholder='Must have a least 6 characters'
+                />
+              </Form.Group>
 
-            <Form.Group id='password' className='mb-3'>
-              <Form.Control 
-                type='password' 
-                ref={passwordRef} 
-                required 
-                placeholder='Must have a least 6 characters'
-              />
-            </Form.Group>
-
-            <Form.Group id='password-confirm'>
-              <Form.Control 
-                type='password' 
-                ref={passwordConfirmRef} 
-                required 
-                placeholder='confirm your password'
-              />
-            </Form.Group>
-            
-            <Button 
-              variant='primary'
-              disabled={isLoading} 
-              className='w-100 mt-4' 
-              type='submit'>
-              Sign Up
-            </Button>
-          </Form>
-
+              <Form.Group id='password-confirm'>
+                <Form.Control 
+                  type='password' 
+                  ref={passwordConfirmRef} 
+                  required 
+                  placeholder='confirm your password'
+                />
+              </Form.Group>
+              
+              <Button 
+                variant='primary'
+                disabled={isLoading || isSucceed} 
+                className='w-100 mt-4' 
+                type='submit'>
+                Sign Up
+              </Button>
+            </Form>
         </Card.Body>
       </Card>
       <div className='w-100 text-center mt-2'>
