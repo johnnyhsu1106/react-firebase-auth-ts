@@ -2,13 +2,16 @@ import { FormEvent, useRef, useState } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
-import Message from './Message';
+import Message from './shared/Message';
+import EmailInput from './shared/EmailInput';
+import PasswordInput from './shared/PasswordInput';
+
 import { useAuthContext } from '../context/AuthContext';
 import { FirebaseError } from 'firebase/app';
  
 export interface AuthError extends FirebaseError {
   message: string;
-}
+};
 
 const Signup = () => {
   const [successMsg, setSuccessMsg] = useState<string>('')
@@ -62,32 +65,20 @@ const Signup = () => {
             {errorMsg && <Message type='danger' message={errorMsg}/>}
             {successMsg && <Message type='success' message={successMsg} />}
             <Form onSubmit={handSignupleSubmit}>
-              <Form.Group id='email' className='mb-3'>
-                <Form.Control 
-                  type='email' 
-                  ref={emailRef} 
-                  required
-                  placeholder='example@gmail.com'
-                />
-              </Form.Group>
 
-              <Form.Group id='password' className='mb-3'>
-                <Form.Control 
-                  type='password' 
-                  ref={passwordRef} 
-                  required 
-                  placeholder='Must have a least 6 characters'
-                />
-              </Form.Group>
-
-              <Form.Group id='password-confirm'>
-                <Form.Control 
-                  type='password' 
-                  ref={passwordConfirmRef} 
-                  required 
-                  placeholder='confirm your password'
-                />
-              </Form.Group>
+              <EmailInput
+                className={'mb-3'} 
+                ref={emailRef} 
+              />
+              <PasswordInput
+                className='mb-3'
+                placeholder='Must have a least 6 characters' 
+                ref={passwordRef}
+              />
+              <PasswordInput 
+                placeholder='confirm your password'
+                ref={passwordConfirmRef}
+              />
               
               <Button 
                 variant='primary'

@@ -2,12 +2,15 @@ import { FormEvent, useRef, useState } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
-import Message from './Message';
+import Message from './shared/Message';
+import EmailInput from './shared/EmailInput';
+import PasswordInput from './shared/PasswordInput';
+
 import { useAuthContext } from '../context/AuthContext';
 
 
 const Login = () => {
-  const [message, setMessage] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSucceed, setIsSucceed] = useState<boolean>(false);
   const { login } = useAuthContext();
@@ -19,7 +22,12 @@ const Login = () => {
   const handLoginleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setMessage('')
+    if (passwordRef.current?.value.trim() === '') {
+      setErrorMsg('Please enter password');
+      return;
+    }   
+
+    setErrorMsg('')
     setIsLoading(true)
     
     try { 
@@ -28,7 +36,7 @@ const Login = () => {
       navigation('/');
 
     } catch (err) {
-      setMessage('Failed to log in');
+      setErrorMsg('Failed to log in');
       setIsSucceed(false);
 
     } finally {
@@ -42,26 +50,18 @@ const Login = () => {
       <Card>
         <Card.Body>
           <h2 className='text-center mb-4'>Log In</h2>
-          { message && <Message type='danger' message={message} /> }
+          { errorMsg && <Message type='danger' message={errorMsg} /> }
 
           <Form onSubmit={handLoginleSubmit}>
-            <Form.Group id='email' className='mb-3'>
-              <Form.Control 
-                type='email'
-                ref={emailRef}
-                placeholder='example@gmail.com'  
-                required 
-              />
-            </Form.Group>
-
-            <Form.Group id='password'>
-              <Form.Control 
-                type='password' 
-                ref={passwordRef}
-                placeholder='Enter your password'
-                required 
-              />
-            </Form.Group>
+            <EmailInput
+              className={'mb-3'} 
+              ref={emailRef} 
+            />
+            <PasswordInput
+              className='mb-3'
+              placeholder='Enter your password' 
+              ref={passwordRef}
+            />
             
             <Button 
               variant='primary'

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Card, Button } from "react-bootstrap"
 import { Link, useNavigate } from 'react-router-dom';
 
-import Message from './Message';
+import Message from './shared/Message';
+
 import { useAuthContext } from '../context/AuthContext';
 
 

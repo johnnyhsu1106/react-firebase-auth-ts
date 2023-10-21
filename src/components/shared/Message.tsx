@@ -11,9 +11,7 @@ const Message = ({
 }: MessageProps) => {
 
   return (
-    <>
-      <Alert variant={type}>{message}</Alert>
-    </>
+    <Alert variant={type}>{message}</Alert>
   )
 }
 
