@@ -51,7 +51,6 @@ const ResetPassword = () => {
 
           <Form onSubmit={handleFormSubmit}>
             <EmailInput ref={emailRef} />
-
             <Button 
               variant='primary'
               disabled={isLoading || isSucceed} 

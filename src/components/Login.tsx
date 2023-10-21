@@ -54,11 +54,10 @@ const Login = () => {
 
           <Form onSubmit={handLoginleSubmit}>
             <EmailInput
-              className={'mb-3'} 
+              className='mb-3' 
               ref={emailRef} 
             />
             <PasswordInput
-              className='mb-3'
               placeholder='Enter your password' 
               ref={passwordRef}
             />

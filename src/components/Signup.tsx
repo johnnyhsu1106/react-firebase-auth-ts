@@ -64,10 +64,10 @@ const Signup = () => {
           <h2 className='text-center mb-4'>Sign Up</h2>
             {errorMsg && <Message type='danger' message={errorMsg}/>}
             {successMsg && <Message type='success' message={successMsg} />}
-            <Form onSubmit={handSignupleSubmit}>
 
+            <Form onSubmit={handSignupleSubmit}>
               <EmailInput
-                className={'mb-3'} 
+                className='mb-3' 
                 ref={emailRef} 
               />
               <PasswordInput

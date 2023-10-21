@@ -65,7 +65,7 @@ const ChangePassword = () => {
 
           <Form onSubmit={handleFormSubmit}>
             <PasswordInput
-              className='mb-4'
+              className='mb-3'
               placeholder='Must have a least 6 characters' 
               ref={passwordRef}
             />
